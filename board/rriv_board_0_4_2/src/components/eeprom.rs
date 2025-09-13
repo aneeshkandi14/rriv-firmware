@@ -96,6 +96,7 @@ pub fn read_datalogger_settings_from_eeprom(board: &mut Board, buffer: &mut [u8]
 
 struct MemoryPosition {
     pub block: u8,
+    #[allow(unused)]
     pub offset: u8,
     pub address: u8
 }

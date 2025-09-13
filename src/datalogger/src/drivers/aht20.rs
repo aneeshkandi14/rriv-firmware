@@ -10,6 +10,7 @@ use super::types::*;
 
 
 const AHTX0_I2CADDR_DEFAULT:u8  = 0x38;   ///< AHT default i2c address
+#[allow(unused)]
 const AHTX0_I2CADDR_ALTERNATE:u8  =  0x39; ///< AHT alternate i2c address
 const AHTX0_CMD_CALIBRATE:u8  =  0xE1;     ///< Calibration command
 const AHTX0_CMD_TRIGGER:u8  =  0xAC;       ///< Trigger reading command
@@ -19,8 +20,7 @@ const AHTX0_STATUS_CALIBRATED:u8  =  0x08; ///< Status bit for calibrated
 
 #[derive(Copy, Clone)]
 pub struct AHT20SpecialConfiguration {
-    wait_time: usize,
-    empty: [u8; 28],
+    wait_time: usize
 }
 
 impl AHT20SpecialConfiguration {
@@ -31,10 +31,9 @@ impl AHT20SpecialConfiguration {
         unsafe { *settings }
     }
 
-    pub fn parse_from_values(value: serde_json::Value) -> Result<AHT20SpecialConfiguration, &'static str> {
+    pub fn parse_from_values(_value: serde_json::Value) -> Result<AHT20SpecialConfiguration, &'static str> {
         Ok( Self {
-            wait_time: 0,
-            empty: [0; 28]
+            wait_time: 0
         })
     }
 }
@@ -47,7 +46,6 @@ pub struct AHT20 {
     enabled: bool
 }
 
-pub struct ConfigurationPayload {}
 
 impl AHT20 {
     fn get_status(board: &mut dyn rriv_board::SensorDriverServices) -> u8 {

@@ -1,5 +1,4 @@
 #![cfg_attr(not(test), no_std)]
-#![feature(array_methods)]
 
 mod datalogger;
 mod services;
@@ -37,7 +36,6 @@ use serde_json::{json, Value};
 pub struct DataLogger {
     settings: DataloggerSettings,
     sensor_drivers: [Option<Box<dyn SensorDriver>>; rriv_board::EEPROM_TOTAL_SENSOR_SLOTS], // TODO: this could be called 'sensor_configs'. modules, (composable modules)
-    _telemeter_drivers: [Option<Box<dyn TelemeterDriver>>; rriv_board::EEPROM_TOTAL_SENSOR_SLOTS],
 
     last_interactive_log_time: i64,
 
@@ -59,8 +57,6 @@ pub struct DataLogger {
 }
 
 const SENSOR_DRIVER_INIT_VALUE: core::option::Option<Box<dyn drivers::types::SensorDriver>> = None;
-const TELEMETER_DRIVER_INIT_VALUE: core::option::Option<Box<dyn drivers::types::TelemeterDriver>> =
-    None;
 const CALIBRATION_INIT_VALUE: core::option::Option<Box<[types::CalibrationPair]>> = None;
 
 impl DataLogger {
@@ -68,8 +64,6 @@ impl DataLogger {
         DataLogger {
             settings: DataloggerSettings::new(),
             sensor_drivers: [SENSOR_DRIVER_INIT_VALUE; rriv_board::EEPROM_TOTAL_SENSOR_SLOTS],
-            _telemeter_drivers: [TELEMETER_DRIVER_INIT_VALUE;
-                rriv_board::EEPROM_TOTAL_SENSOR_SLOTS],
             last_interactive_log_time: 0,
             assigned_gpios: GpioRequest::none(),
             mode: DataLoggerMode::Interactive,
@@ -175,7 +169,7 @@ impl DataLogger {
                         // if we have a conflict, what should happen?
                         // definitely don't load the driver, but also this should never happen
                         // should we send something on serial? this is during startup.
-                        //responses::send_command_response_error(board, message, "");
+                        responses::send_command_response_error(board, message, "");
                         return;
                     }
                 };
@@ -1045,6 +1039,8 @@ impl DataLogger {
                     }
                 }
             }
+            
+            #[allow(unused)] // the payload doesn't contain anything useful
             CommandPayload::DeviceGet(device_get_payload) => {
                 self.device_get(board);
             }
